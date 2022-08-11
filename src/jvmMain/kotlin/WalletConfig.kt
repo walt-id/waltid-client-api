@@ -1,0 +1,37 @@
+import com.beust.klaxon.Klaxon
+import id.walt.model.oidc.OIDCProvider
+import java.io.File
+
+data class WalletConfig(
+    @ExternalHostnameUrl val walletUiUrl: String = "http://localhost:3000",
+    @ExternalHostnameUrl val walletApiUrl: String = "http://localhost:3000/api",
+    var issuers: Map<String, OIDCProvider> = mapOf()
+) {
+    companion object {
+      val WALTID_DATA_ROOT = System.getenv("WALTID_DATA_ROOT") ?: "."
+
+        val CONFIG_FILE = "${WALTID_DATA_ROOT}/config/wallet-config.json"
+        val ISSUERS_SECRETS = "${WALTID_DATA_ROOT}/secrets/issuers.json"
+        lateinit var config: WalletConfig
+
+        init {
+            val cf = File(CONFIG_FILE)
+            if (cf.exists()) {
+                config = Klaxon().fieldConverter(ExternalHostnameUrl::class, externalHostnameUrlValueConverter)
+                    .parse<WalletConfig>(cf) ?: WalletConfig()
+            } else {
+                config = WalletConfig()
+            }
+
+            val issuerSecretsFile = File(ISSUERS_SECRETS)
+            val issuerSecrets = when (issuerSecretsFile.exists()) {
+                true -> Klaxon().parse<SecretConfigMap>(issuerSecretsFile) ?: SecretConfigMap(mapOf())
+                else -> SecretConfigMap(mapOf())
+            }
+            config.issuers = config.issuers.values.associate { issuer ->
+                issuer.id to issuer.withSecret(issuerSecrets.secrets[issuer.id]).withExternalHostnameUrl()
+            }
+        }
+    }
+}
+

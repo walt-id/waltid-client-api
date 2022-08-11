@@ -1,0 +1,126 @@
+import co.touchlab.kermit.Logger
+import com.beust.klaxon.Klaxon
+import id.walt.model.oidc.SIOPv2Request
+import id.walt.model.oidc.VCClaims
+import id.walt.model.oidc.klaxon
+import io.javalin.Javalin
+import io.javalin.apibuilder.ApiBuilder.*
+import io.javalin.http.BadRequestResponse
+import io.javalin.http.Context
+import io.javalin.http.HttpCode
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+
+object SiopServer {
+
+    private val logger = Logger.withTag("SiopServer")
+
+    private val _port = 8091
+
+    fun start() {
+        logger.i { "SiopServer starting at $_port..." }
+        /*embeddedServer(CIO, port = _port) {
+            routing {
+
+                route("api") {
+                    route("wallet") {
+                        route("siopv2") {
+                            get("initPresentation") {
+
+                            }
+                        }
+                    }
+                }
+
+
+                get("/") {
+                    call.respondText("Hello, world!")
+                }
+            }
+        }.start(wait = true)*/
+        Javalin.create {
+            it.enableDevLogging()
+        }.routes {
+            path("api") {
+                path("wallet") {
+                    path("siopv2") {
+                        get("initPresentation", this::initCredentialPresentation)
+                        get("continuePresentation", this::continuePresentation)
+                        post("fulfillPresentation", this::fulfillPresentation)
+                    }
+                }
+            }
+        }.start(_port)
+    }
+
+    fun initCredentialPresentation(ctx: Context) {
+        println("> step: initCredentialPresentation")
+
+        val requiredParams = setOf("redirect_uri", "nonce", "claims")
+        if (requiredParams.any { ctx.queryParam(it).isNullOrEmpty() })
+            throw IllegalArgumentException("HTTP context missing mandatory query parameters")
+        val req = SIOPv2Request(
+            redirect_uri = ctx.queryParam("redirect_uri")!!,
+            response_mode = ctx.queryParam("response_mode") ?: "fragment",
+            nonce = ctx.queryParam("nonce"),
+            claims = klaxon.parse<VCClaims>(ctx.queryParam("claims")!!)!!,
+            state = ctx.queryParam("state")
+        )
+
+        val initCredPresSess = CredentialPresentationManager.initCredentialPresentation(req, passiveIssuance = false)
+
+        GlobalScope.launch {
+            println("==================================")
+            println("NEW SIOPv2 REQUEST FOR CREDENTIALS")
+            println("ID: ${initCredPresSess.id}")
+
+            print("Please enter DID: ")
+            val did = readln()
+
+            println("Continuing presentation...")
+            val contPresSess = CredentialPresentationManager.continueCredentialPresentationFor(initCredPresSess.id, did)
+
+            contPresSess.presentableCredentials!!.forEach {
+
+                println("PRESENTABLE CREDENTIAL: $it - ${Klaxon().toJsonString(it)}")
+            }
+
+            if (contPresSess.presentableCredentials!!.isEmpty()) {
+                println("Warning: presentableCredentials is empty (local custodian used)!")
+            }
+
+            print("Please enter selected credentials:")
+            val theCreds = readln()
+
+            val selectedCredentials = theCreds.let { klaxon.parseArray<PresentableCredential>(it) }
+                ?: throw BadRequestResponse("No selected credentials given")
+
+            println("FULFILLING PRESENTATION...")
+            val siopResp = CredentialPresentationManager.fulfillPresentation(initCredPresSess.id, selectedCredentials)
+            val presSiopResp = PresentationResponse.fromSiopResponse(siopResp)
+
+            println("id_token: " + presSiopResp.id_token)
+            println("vp_token: " + presSiopResp.vp_token)
+            println("state:    " + presSiopResp.state)
+        }
+
+
+        ctx.status(HttpCode.NO_CONTENT)
+    }
+
+    fun continuePresentation(ctx: Context) {
+        val sessionId = ctx.queryParam("sessionId") ?: throw BadRequestResponse("sessionId not specified")
+        val did = ctx.queryParam("did") ?: throw BadRequestResponse("did not specified")
+        ctx.json(CredentialPresentationManager.continueCredentialPresentationFor(sessionId, did))
+    }
+
+    fun fulfillPresentation(ctx: Context) {
+        val sessionId = ctx.queryParam("sessionId") ?: throw BadRequestResponse("sessionId not specified")
+        val selectedCredentials = ctx.body().let { klaxon.parseArray<PresentableCredential>(it) }
+            ?: throw BadRequestResponse("No selected credentials given")
+
+        ctx.json(
+            CredentialPresentationManager.fulfillPresentation(sessionId, selectedCredentials)
+                .let { PresentationResponse.fromSiopResponse(it) })
+    }
+}
