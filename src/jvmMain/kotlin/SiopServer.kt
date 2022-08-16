@@ -32,7 +32,6 @@ object SiopServer {
                     }
                 }
 
-
                 get("/") {
                     call.respondText("Hello, world!")
                 }
@@ -44,9 +43,15 @@ object SiopServer {
             path("api") {
                 path("wallet") {
                     path("siopv2") {
+                        // Present cred
                         get("initPresentation", this::initCredentialPresentation)
                         get("continuePresentation", this::continuePresentation)
                         post("fulfillPresentation", this::fulfillPresentation)
+
+                        // Recv cred
+                        get("initPassiveIssuance", this::initPassiveIssuance)
+                        post("fulfillPassiveIssuance", this::fulfillPassiveIssuance)
+                        get("issuanceSessionInfo", this::getIssuanceSessionInfo)
                     }
                 }
             }
@@ -122,5 +127,36 @@ object SiopServer {
         ctx.json(
             CredentialPresentationManager.fulfillPresentation(sessionId, selectedCredentials)
                 .let { PresentationResponse.fromSiopResponse(it) })
+    }
+
+    // RECV
+
+    fun initPassiveIssuance(ctx: Context) {
+        val req = SIOPv2Request.fromHttpContext(ctx)
+        val session = CredentialPresentationManager.initCredentialPresentation(req, passiveIssuance = true)
+        ctx.status(HttpCode.FOUND)
+            .header("Location", "${WalletConfig.config.walletUiUrl}/CredentialRequest/?sessionId=${session.id}")
+    }
+
+    fun fulfillPassiveIssuance(ctx: Context) {
+        val sessionId = ctx.queryParam("sessionId") ?: throw BadRequestResponse("sessionId not specified")
+        val selectedCredentials = ctx.body().let { klaxon.parseArray<PresentableCredential>(it) }
+            ?: throw BadRequestResponse("No selected credentials given")
+        val issuanceSession = CredentialPresentationManager.fulfillPassiveIssuance(
+            sessionId,
+            selectedCredentials,
+            JWTService.getUserInfo(ctx)!!
+        )
+        ctx.result(issuanceSession.id)
+    }
+
+    fun getIssuanceSessionInfo(ctx: Context) {
+        val sessionId = ctx.queryParam("sessionId")
+        val issuanceSession = sessionId?.let { CredentialIssuanceManager.getSession(it) }
+        if (issuanceSession == null) {
+            ctx.status(HttpCode.BAD_REQUEST).result("Invalid or expired session id given")
+            return
+        }
+        ctx.json(issuanceSession)
     }
 }
