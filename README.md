@@ -109,6 +109,7 @@ state:    eyJpZHBTZXNzaW9uSWQiIDogIjViMTI5ZThmLWQwNDktNDU4My04N2IwLTczMzA0NTQxN2
 
 # RECV VC
 
+## Get initPassiveIssuance SIOPv2 request
 ```bash
 curl -v 'https://issuer.walt.id/issuer-api/credentials/issuance/request?walletId=walt.id' -X POST -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:103.0) Gecko/20100101 Firefox/103.0' -H 'Accept: application/json, text/plain, */*' -H 'Accept-Language: en-US,en;q=0.5' -H 'Accept-Encoding: gzip, deflate, br' -H 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhYWFhYWFhQGJ5b20uZGUifQ.HcJqppZCP39yEyGZq-CaqkFnzDdGmx5kX8j9WQLAP_8' -H 'Content-Type: application/json' -H 'Origin: https://issuer.walt.id' -H 'DNT: 1' -H 'Connection: keep-alive' -H 'Referer: https://issuer.walt.id/' -H 'Cookie: i18n_redirected=en' -H 'Sec-Fetch-Dest: empty' -H 'Sec-Fetch-Mode: cors' -H 'Sec-Fetch-Site: same-origin' -H 'TE: trailers' --data-raw $'{"credentials":[{"credentialData":{"credentialSubject":{"currentAddress":["1 Boulevard de la Libert\xe9, 59800 Lille"],"dateOfBirth":"1993-04-08","familyName":"DOE","firstName":"Jane","gender":"FEMALE","id":"did:ebsi:2AEMAqXWKYMu1JHPAgGcga4dxu7ThgfgN95VyJBJGZbSJUtp","nameAndFamilyNameAtBirth":"Jane DOE","personalIdentifier":"0904008084H","placeOfBirth":"LILLE, FRANCE"}},"schemaId":"https://api.preprod.ebsi.eu/trusted-schemas-registry/v1/schemas/0xb77f8516a965631b4f197ad54c65a9e2f9936ebfb76bae4906d33744dbcc60ba","type":"VerifiableId"}]}'
 ```
@@ -129,6 +130,7 @@ cookie: i18n_redirected=en
 te: trailers
 ```
 
+### Response
 ```text
 https://wallet.walt.id/api/wallet/siopv2/initPassiveIssuance/?response_type=id_token&response_mode=post&client_id=https%3A%2F%2Fissuer.walt.id%2Fissuer-api%2Fcredentials%2Fissuance%2Ffulfill&redirect_uri=https%3A%2F%2Fissuer.walt.id%2Fissuer-api%2Fcredentials%2Fissuance%2Ffulfill&scope=openid&nonce=29add0d8-fd53-4d81-8303-906473200f24&claims=%7B%22vp_token%22+%3A+%7B%22presentation_definition%22+%3A+%7B%22format%22+%3A+null%2C+%22id%22+%3A+%221%22%2C+%22input_descriptors%22+%3A+%5B%5D%2C+%22name%22+%3A+null%2C+%22purpose%22+%3A+null%2C+%22submission_requirements%22+%3A+null%7D%7D%7D&state=29add0d8-fd53-4d81-8303-906473200f24
 ```

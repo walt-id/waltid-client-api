@@ -45,13 +45,9 @@ object SiopServer {
                     path("siopv2") {
                         // Present cred
                         get("initPresentation", this::initCredentialPresentation)
-                        get("continuePresentation", this::continuePresentation)
-                        post("fulfillPresentation", this::fulfillPresentation)
 
                         // Recv cred
                         get("initPassiveIssuance", this::initPassiveIssuance)
-                        post("fulfillPassiveIssuance", this::fulfillPassiveIssuance)
-                        get("issuanceSessionInfo", this::getIssuanceSessionInfo)
                     }
                 }
             }
@@ -77,7 +73,7 @@ object SiopServer {
         GlobalScope.launch {
             println("==================================")
             println("NEW SIOPv2 REQUEST FOR CREDENTIALS")
-            println("ID: ${initCredPresSess.id}")
+            println("Session-ID: ${initCredPresSess.id}")
 
             print("Please enter DID: ")
             val did = readln()
@@ -113,50 +109,50 @@ object SiopServer {
         ctx.status(HttpCode.NO_CONTENT)
     }
 
-    fun continuePresentation(ctx: Context) {
-        val sessionId = ctx.queryParam("sessionId") ?: throw BadRequestResponse("sessionId not specified")
-        val did = ctx.queryParam("did") ?: throw BadRequestResponse("did not specified")
-        ctx.json(CredentialPresentationManager.continueCredentialPresentationFor(sessionId, did))
-    }
-
-    fun fulfillPresentation(ctx: Context) {
-        val sessionId = ctx.queryParam("sessionId") ?: throw BadRequestResponse("sessionId not specified")
-        val selectedCredentials = ctx.body().let { klaxon.parseArray<PresentableCredential>(it) }
-            ?: throw BadRequestResponse("No selected credentials given")
-
-        ctx.json(
-            CredentialPresentationManager.fulfillPresentation(sessionId, selectedCredentials)
-                .let { PresentationResponse.fromSiopResponse(it) })
-    }
-
     // RECV
 
     fun initPassiveIssuance(ctx: Context) {
         val req = SIOPv2Request.fromHttpContext(ctx)
         val session = CredentialPresentationManager.initCredentialPresentation(req, passiveIssuance = true)
-        ctx.status(HttpCode.FOUND)
-            .header("Location", "${WalletConfig.config.walletUiUrl}/CredentialRequest/?sessionId=${session.id}")
-    }
 
-    fun fulfillPassiveIssuance(ctx: Context) {
-        val sessionId = ctx.queryParam("sessionId") ?: throw BadRequestResponse("sessionId not specified")
-        val selectedCredentials = ctx.body().let { klaxon.parseArray<PresentableCredential>(it) }
-            ?: throw BadRequestResponse("No selected credentials given")
-        val issuanceSession = CredentialPresentationManager.fulfillPassiveIssuance(
-            sessionId,
-            selectedCredentials,
-            JWTService.getUserInfo(ctx)!!
-        )
-        ctx.result(issuanceSession.id)
-    }
+        GlobalScope.launch {
+            println("==================================")
+            println("NEW SIOPv2 ISSUANCE REQUEST FOR CREDENTIALS")
+            println("Request  Session-ID: ${session.id}")
 
-    fun getIssuanceSessionInfo(ctx: Context) {
-        val sessionId = ctx.queryParam("sessionId")
-        val issuanceSession = sessionId?.let { CredentialIssuanceManager.getSession(it) }
-        if (issuanceSession == null) {
-            ctx.status(HttpCode.BAD_REQUEST).result("Invalid or expired session id given")
-            return
+            print("Please enter DID: ")
+            val did = readln()
+
+            val sessionId = session.id
+            ctx.json(CredentialPresentationManager.continueCredentialPresentationFor(sessionId, did))
+
+            println("Continuing presentation...")
+            val contPresSess = CredentialPresentationManager.continueCredentialPresentationFor(sessionId, did)
+
+            if (contPresSess.presentableCredentials!!.isNotEmpty()) {
+                println("Warning: presentableCredentials is not empty?")
+            }
+
+            println("FULFILLING PRESENTATION...")
+
+
+            val emptyPresentation = emptyList<PresentableCredential>() // requires empty presentation
+
+            val issuanceSession = CredentialPresentationManager.fulfillPassiveIssuance(
+                sessionId,
+                emptyPresentation,
+                UserInfo(did) // ???, email in walletkit, probably ignored though
+            )
+            ctx.result(issuanceSession.id)
+
+            issuanceSession.credentials!!.forEachIndexed { i, vc ->
+                println("Received credential #${i + 1}: $vc")
+            }
+            println("SIOPv2 ISSUANCE SUCEEDED FOR ${issuanceSession.credentials!!.size} CREDENTIAL(S)")
+            println("Request  Session-ID: ${session.id}")
+            println("Issuance Session-ID: ${issuanceSession.id}")
+            println("==================================")
         }
-        ctx.json(issuanceSession)
     }
+
 }
