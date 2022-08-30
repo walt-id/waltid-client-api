@@ -93,6 +93,9 @@ kotlin {
             dependencies {
                 rootProject
                 implementation("com.google.android.material:material:1.6.1")
+
+                implementation("io.ktor:ktor-server-call-logging:2.1.0")
+
             }
         }
         val androidTest by getting {
