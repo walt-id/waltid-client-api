@@ -28,47 +28,19 @@ object SiopServer {
                     route("wallet") {
                         route("siopv2") {
                             get("initPresentation") {
+                                println("> step: initCredentialPresentation")
 
-                            }
-                        }
-                    }
-                }
 
-                get("/") {
-                    call.respondText("Hello, world!")
-                }
-            }
-        }.start(wait = true)*/
-        Javalin.create {
-            it.enableDevLogging()
-        }.routes {
-            path("api") {
-                path("wallet") {
-                    path("siopv2") {
-                        // Present cred
-                        get("initPresentation", this::initCredentialPresentation)
-
-                        // Recv cred
-                        get("initPassiveIssuance", this::initPassiveIssuance)
-                    }
-                }
-            }
-        }.start(_port)
-    }
-
-    fun initCredentialPresentation(ctx: Context) {
-        println("> step: initCredentialPresentation")
-
-        val requiredParams = setOf("redirect_uri", "nonce", "claims")
-        if (requiredParams.any { ctx.queryParam(it).isNullOrEmpty() })
-            throw IllegalArgumentException("HTTP context missing mandatory query parameters")
-        val req = SIOPv2Request(
-            redirect_uri = ctx.queryParam("redirect_uri")!!,
-            response_mode = ctx.queryParam("response_mode") ?: "fragment",
-            nonce = ctx.queryParam("nonce"),
-            claims = klaxon.parse<VCClaims>(ctx.queryParam("claims")!!)!!,
-            state = ctx.queryParam("state")
-        )
+                                val requiredParams = setOf("redirect_uri", "nonce", "claims")
+                                if (requiredParams.any { call.parameters[it].isNullOrEmpty() })
+                                    throw IllegalArgumentException("HTTP context missing mandatory query parameters")
+                                val req = SIOPv2Request(
+                                    redirect_uri = call.parameters["redirect_uri"]!!,
+                                    response_mode = call.parameters["response_mode"] ?: "fragment",
+                                    nonce = call.parameters["nonce"],
+                                    claims = klaxon.parse<VCClaims>(call.parameters["claims"]!!)!!,
+                                    state = call.parameters["state"]
+                                )
 
         val initCredPresSess = CredentialPresentationManager.initCredentialPresentation(req, passiveIssuance = false)
 
