@@ -150,5 +150,6 @@ object SiopServer {
                         }
                     }
                 }
-
+        }.start(wait = true)
+    }
 }
