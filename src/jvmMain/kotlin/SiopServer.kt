@@ -53,8 +53,11 @@ object SiopServer {
                                     print("Please enter DID: ")
                                     val did = readln()
 
-            println("Continuing presentation...")
-            val contPresSess = CredentialPresentationManager.continueCredentialPresentationFor(initCredPresSess.id, did)
+                                    println("Continuing presentation...")
+                                    val contPresSess = CredentialPresentationManager.continueCredentialPresentationFor(
+                                        initCredPresSess.id,
+                                        did
+                                    )
 
             contPresSess.presentableCredentials!!.forEach {
 
