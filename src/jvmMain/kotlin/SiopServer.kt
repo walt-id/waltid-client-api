@@ -112,8 +112,8 @@ object SiopServer {
                                     println("NEW SIOPv2 ISSUANCE REQUEST FOR CREDENTIALS")
                                     println("Request  Session-ID: ${session.id}")
 
-            print("Please enter DID: ")
-            val did = readln()
+                                    print("Please enter DID: ")
+                                    val did = readln()
 
             val sessionId = session.id
             ctx.json(CredentialPresentationManager.continueCredentialPresentationFor(sessionId, did))
