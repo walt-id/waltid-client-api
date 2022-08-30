@@ -125,7 +125,7 @@ object SiopServer {
                                         println("Warning: presentableCredentials is not empty?")
                                     }
 
-            println("FULFILLING PRESENTATION...")
+                                    println("FULFILLING PRESENTATION...")
 
 
             val emptyPresentation = emptyList<PresentableCredential>() // requires empty presentation
