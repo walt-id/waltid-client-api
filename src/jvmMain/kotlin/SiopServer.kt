@@ -73,8 +73,8 @@ object SiopServer {
                                     print("Please enter selected credentials:")
                                     val theCreds = readln()
 
-            val selectedCredentials = theCreds.let { klaxon.parseArray<PresentableCredential>(it) }
-                ?: throw BadRequestResponse("No selected credentials given")
+                                    val selectedCredentials = theCreds.let { klaxon.parseArray<PresentableCredential>(it) }
+                                        ?: throw IllegalArgumentException("No selected credentials given")
 
             println("FULFILLING PRESENTATION...")
             val siopResp = CredentialPresentationManager.fulfillPresentation(initCredPresSess.id, selectedCredentials)
