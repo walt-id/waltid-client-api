@@ -79,9 +79,6 @@ kotlin {
 
 
                 // to remove:
-                implementation("io.javalin:javalin:4.6.4")
-                implementation("com.github.kmehrunes:javalin-jwt:0.3")
-                implementation("com.auth0:java-jwt:4.0.0")
                 implementation("com.beust:klaxon:5.6")
                 implementation("com.google.guava:guava:31.1-jre")
 
