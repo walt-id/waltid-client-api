@@ -50,8 +50,8 @@ object SiopServer {
                                     println("NEW SIOPv2 REQUEST FOR CREDENTIALS")
                                     println("Session-ID: ${initCredPresSess.id}")
 
-            print("Please enter DID: ")
-            val did = readln()
+                                    print("Please enter DID: ")
+                                    val did = readln()
 
             println("Continuing presentation...")
             val contPresSess = CredentialPresentationManager.continueCredentialPresentationFor(initCredPresSess.id, did)
