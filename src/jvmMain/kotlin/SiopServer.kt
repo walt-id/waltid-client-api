@@ -103,11 +103,9 @@ object SiopServer {
                                     state = call.parameters["state"]
                                 )
 
-    // RECV
 
-    fun initPassiveIssuance(ctx: Context) {
-        val req = SIOPv2Request.fromHttpContext(ctx)
-        val session = CredentialPresentationManager.initCredentialPresentation(req, passiveIssuance = true)
+                                val session =
+                                    CredentialPresentationManager.initCredentialPresentation(req, passiveIssuance = true)
 
         GlobalScope.launch {
             println("==================================")
