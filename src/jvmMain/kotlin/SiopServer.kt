@@ -42,7 +42,8 @@ object SiopServer {
                                     state = call.parameters["state"]
                                 )
 
-        val initCredPresSess = CredentialPresentationManager.initCredentialPresentation(req, passiveIssuance = false)
+                                val initCredPresSess =
+                                    CredentialPresentationManager.initCredentialPresentation(req, passiveIssuance = false)
 
         GlobalScope.launch {
             println("==================================")
