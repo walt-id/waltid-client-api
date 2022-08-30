@@ -136,14 +136,19 @@ object SiopServer {
                                         UserInfo(did) // ???, email in walletkit, probably ignored though
                                     )
 
-            issuanceSession.credentials!!.forEachIndexed { i, vc ->
-                println("Received credential #${i + 1}: $vc")
-            }
-            println("SIOPv2 ISSUANCE SUCEEDED FOR ${issuanceSession.credentials!!.size} CREDENTIAL(S)")
-            println("Request  Session-ID: ${session.id}")
-            println("Issuance Session-ID: ${issuanceSession.id}")
-            println("==================================")
-        }
-    }
+                                    issuanceSession.credentials!!.forEachIndexed { i, vc ->
+                                        println("Received credential #${i + 1}: $vc")
+                                    }
+                                    println("SIOPv2 ISSUANCE SUCEEDED FOR ${issuanceSession.credentials!!.size} CREDENTIAL(S)")
+                                    println("Request  Session-ID: ${session.id}")
+                                    println("Issuance Session-ID: ${issuanceSession.id}")
+                                    println("==================================")
+
+                                    call.respond(issuanceSession)
+                                }
+                            }
+                        }
+                    }
+                }
 
 }
