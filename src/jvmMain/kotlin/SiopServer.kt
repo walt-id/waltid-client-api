@@ -117,8 +117,9 @@ object SiopServer {
 
                                     val sessionId = session.id
 
-            println("Continuing presentation...")
-            val contPresSess = CredentialPresentationManager.continueCredentialPresentationFor(sessionId, did)
+                                    println("Continuing presentation...")
+                                    val contPresSess =
+                                        CredentialPresentationManager.continueCredentialPresentationFor(sessionId, did)
 
             if (contPresSess.presentableCredentials!!.isNotEmpty()) {
                 println("Warning: presentableCredentials is not empty?")
