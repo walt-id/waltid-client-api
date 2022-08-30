@@ -19,7 +19,9 @@ object SiopServer {
 
     fun start() {
         logger.i { "SiopServer starting at $_port..." }
-        /*embeddedServer(CIO, port = _port) {
+        embeddedServer(CIO, port = _port) {
+            install(CallLogging)
+
             routing {
 
                 route("api") {
