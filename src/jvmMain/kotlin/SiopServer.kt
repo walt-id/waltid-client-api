@@ -61,7 +61,7 @@ object SiopServer {
                                         did
                                     )
 
-            contPresSess.presentableCredentials!!.forEach {
+                                    contPresSess.presentableCredentials!!.forEach {
 
                 println("PRESENTABLE CREDENTIAL: $it - ${Klaxon().toJsonString(it)}")
             }
