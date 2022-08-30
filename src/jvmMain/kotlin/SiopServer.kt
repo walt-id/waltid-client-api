@@ -63,8 +63,8 @@ object SiopServer {
 
                                     contPresSess.presentableCredentials!!.forEach {
 
-                println("PRESENTABLE CREDENTIAL: $it - ${Klaxon().toJsonString(it)}")
-            }
+                                        println("PRESENTABLE CREDENTIAL: $it - ${Klaxon().toJsonString(it)}")
+                                    }
 
             if (contPresSess.presentableCredentials!!.isEmpty()) {
                 println("Warning: presentableCredentials is empty (local custodian used)!")
