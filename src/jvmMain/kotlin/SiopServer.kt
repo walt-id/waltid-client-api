@@ -91,8 +91,17 @@ object SiopServer {
                                 call.respond(HttpStatusCode.NoContent)
                             }
 
-        ctx.status(HttpCode.NO_CONTENT)
-    }
+                            get("initPassiveIssuance") {
+                                val requiredParams = setOf("redirect_uri", "nonce", "claims")
+                                if (requiredParams.any { call.parameters[it].isNullOrEmpty() })
+                                    throw IllegalArgumentException("HTTP context missing mandatory query parameters")
+                                val req = SIOPv2Request(
+                                    redirect_uri = call.parameters["redirect_uri"]!!,
+                                    response_mode = call.parameters["response_mode"] ?: "fragment",
+                                    nonce = call.parameters["nonce"],
+                                    claims = klaxon.parse<VCClaims>(call.parameters["claims"]!!)!!,
+                                    state = call.parameters["state"]
+                                )
 
     // RECV
 
