@@ -121,7 +121,7 @@ object CredentialIssuanceManager {
                     schemaId,
                     issuer.ciSvc.generateDidProof(session.issuanceRequest.did, session.tokenNonce)
                 )
-            }.filterNotNull().map { it!! }
+            }.filterNotNull().map { it }
 
             session.credentials?.forEach {
                 it.id = it.id ?: UUID.randomUUID().toString()
