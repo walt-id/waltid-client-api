@@ -3,11 +3,13 @@ import com.beust.klaxon.Klaxon
 import id.walt.model.oidc.SIOPv2Request
 import id.walt.model.oidc.VCClaims
 import id.walt.model.oidc.klaxon
-import io.javalin.Javalin
-import io.javalin.apibuilder.ApiBuilder.*
-import io.javalin.http.BadRequestResponse
-import io.javalin.http.Context
-import io.javalin.http.HttpCode
+import io.ktor.http.*
+import io.ktor.server.application.*
+import io.ktor.server.cio.*
+import io.ktor.server.engine.*
+import io.ktor.server.plugins.callloging.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
