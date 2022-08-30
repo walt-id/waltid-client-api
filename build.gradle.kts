@@ -53,8 +53,8 @@ kotlin {
 
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
 
-                implementation("io.ktor:ktor-server-core:2.0.3")
-                implementation("io.ktor:ktor-server-cio:2.0.3")
+                implementation("io.ktor:ktor-server-core:2.1.0")
+                implementation("io.ktor:ktor-server-cio:2.1.0")
 
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0-RC")
 
