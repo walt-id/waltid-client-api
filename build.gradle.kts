@@ -75,6 +75,9 @@ kotlin {
 
                 implementation("com.nimbusds:oauth2-oidc-sdk:9.37.2")
 
+                implementation("io.ktor:ktor-server-call-logging:2.1.0")
+
+
                 // to remove:
                 implementation("io.javalin:javalin:4.6.4")
                 implementation("com.github.kmehrunes:javalin-jwt:0.3")
