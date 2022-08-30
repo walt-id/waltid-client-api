@@ -45,10 +45,10 @@ object SiopServer {
                                 val initCredPresSess =
                                     CredentialPresentationManager.initCredentialPresentation(req, passiveIssuance = false)
 
-        GlobalScope.launch {
-            println("==================================")
-            println("NEW SIOPv2 REQUEST FOR CREDENTIALS")
-            println("Session-ID: ${initCredPresSess.id}")
+                                GlobalScope.launch {
+                                    println("==================================")
+                                    println("NEW SIOPv2 REQUEST FOR CREDENTIALS")
+                                    println("Session-ID: ${initCredPresSess.id}")
 
             print("Please enter DID: ")
             val did = readln()
