@@ -128,7 +128,7 @@ object SiopServer {
                                     println("FULFILLING PRESENTATION...")
 
 
-            val emptyPresentation = emptyList<PresentableCredential>() // requires empty presentation
+                                    val emptyPresentation = emptyList<PresentableCredential>() // requires empty presentation
 
             val issuanceSession = CredentialPresentationManager.fulfillPassiveIssuance(
                 sessionId,
