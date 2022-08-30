@@ -76,9 +76,12 @@ object SiopServer {
                                     val selectedCredentials = theCreds.let { klaxon.parseArray<PresentableCredential>(it) }
                                         ?: throw IllegalArgumentException("No selected credentials given")
 
-            println("FULFILLING PRESENTATION...")
-            val siopResp = CredentialPresentationManager.fulfillPresentation(initCredPresSess.id, selectedCredentials)
-            val presSiopResp = PresentationResponse.fromSiopResponse(siopResp)
+                                    println("FULFILLING PRESENTATION...")
+                                    val siopResp = CredentialPresentationManager.fulfillPresentation(
+                                        initCredPresSess.id,
+                                        selectedCredentials
+                                    )
+                                    val presSiopResp = PresentationResponse.fromSiopResponse(siopResp)
 
             println("id_token: " + presSiopResp.id_token)
             println("vp_token: " + presSiopResp.vp_token)
