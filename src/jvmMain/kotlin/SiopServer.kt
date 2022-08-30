@@ -130,12 +130,11 @@ object SiopServer {
 
                                     val emptyPresentation = emptyList<PresentableCredential>() // requires empty presentation
 
-            val issuanceSession = CredentialPresentationManager.fulfillPassiveIssuance(
-                sessionId,
-                emptyPresentation,
-                UserInfo(did) // ???, email in walletkit, probably ignored though
-            )
-            ctx.result(issuanceSession.id)
+                                    val issuanceSession = CredentialPresentationManager.fulfillPassiveIssuance(
+                                        sessionId,
+                                        emptyPresentation,
+                                        UserInfo(did) // ???, email in walletkit, probably ignored though
+                                    )
 
             issuanceSession.credentials!!.forEachIndexed { i, vc ->
                 println("Received credential #${i + 1}: $vc")
