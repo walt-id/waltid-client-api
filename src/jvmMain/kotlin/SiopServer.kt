@@ -88,6 +88,8 @@ object SiopServer {
                                     println("state:    " + presSiopResp.state)
                                 }
 
+                                call.respond(HttpStatusCode.NoContent)
+                            }
 
         ctx.status(HttpCode.NO_CONTENT)
     }
