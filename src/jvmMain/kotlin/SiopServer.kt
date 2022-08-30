@@ -115,8 +115,7 @@ object SiopServer {
                                     print("Please enter DID: ")
                                     val did = readln()
 
-            val sessionId = session.id
-            ctx.json(CredentialPresentationManager.continueCredentialPresentationFor(sessionId, did))
+                                    val sessionId = session.id
 
             println("Continuing presentation...")
             val contPresSess = CredentialPresentationManager.continueCredentialPresentationFor(sessionId, did)
