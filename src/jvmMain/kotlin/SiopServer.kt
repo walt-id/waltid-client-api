@@ -66,9 +66,9 @@ object SiopServer {
                                         println("PRESENTABLE CREDENTIAL: $it - ${Klaxon().toJsonString(it)}")
                                     }
 
-            if (contPresSess.presentableCredentials!!.isEmpty()) {
-                println("Warning: presentableCredentials is empty (local custodian used)!")
-            }
+                                    if (contPresSess.presentableCredentials!!.isEmpty()) {
+                                        println("Warning: presentableCredentials is empty (local custodian used)!")
+                                    }
 
             print("Please enter selected credentials:")
             val theCreds = readln()
