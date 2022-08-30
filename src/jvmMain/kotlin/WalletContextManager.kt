@@ -10,10 +10,4 @@ object WalletContextManager : WaltIdContextManager() {
 
     fun getUserContext(userInfo: UserInfo) = userContexts.get(userInfo.id)
 
-    val preRequestHandler
-        get() = Handler { ctx -> JWTService.getUserInfo(ctx)?.let { setCurrentContext(getUserContext(it)) } }
-
-    val postRequestHandler
-        get() = Handler { ctx -> resetCurrentContext() }
-
 }
