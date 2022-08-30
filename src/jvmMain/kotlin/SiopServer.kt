@@ -70,8 +70,8 @@ object SiopServer {
                                         println("Warning: presentableCredentials is empty (local custodian used)!")
                                     }
 
-            print("Please enter selected credentials:")
-            val theCreds = readln()
+                                    print("Please enter selected credentials:")
+                                    val theCreds = readln()
 
             val selectedCredentials = theCreds.let { klaxon.parseArray<PresentableCredential>(it) }
                 ?: throw BadRequestResponse("No selected credentials given")
