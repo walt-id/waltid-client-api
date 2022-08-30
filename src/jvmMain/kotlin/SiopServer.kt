@@ -83,10 +83,10 @@ object SiopServer {
                                     )
                                     val presSiopResp = PresentationResponse.fromSiopResponse(siopResp)
 
-            println("id_token: " + presSiopResp.id_token)
-            println("vp_token: " + presSiopResp.vp_token)
-            println("state:    " + presSiopResp.state)
-        }
+                                    println("id_token: " + presSiopResp.id_token)
+                                    println("vp_token: " + presSiopResp.vp_token)
+                                    println("state:    " + presSiopResp.state)
+                                }
 
 
         ctx.status(HttpCode.NO_CONTENT)
