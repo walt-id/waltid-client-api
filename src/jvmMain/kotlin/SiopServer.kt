@@ -3,11 +3,13 @@ import com.beust.klaxon.Klaxon
 import id.walt.model.oidc.SIOPv2Request
 import id.walt.model.oidc.VCClaims
 import id.walt.model.oidc.klaxon
-import io.ktor.http.*
+import id.walt.services.did.DidService
+import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.cio.*
 import io.ktor.server.engine.*
 import io.ktor.server.plugins.callloging.*
+import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.GlobalScope
@@ -23,6 +25,9 @@ object SiopServer {
         logger.i { "SiopServer starting at $_port..." }
         embeddedServer(CIO, port = _port) {
             install(CallLogging)
+            install(ContentNegotiation) {
+                json()
+            }
 
             routing {
 
