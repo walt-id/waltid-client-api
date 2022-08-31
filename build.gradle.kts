@@ -76,6 +76,9 @@ kotlin {
                 implementation("com.nimbusds:oauth2-oidc-sdk:9.37.2")
 
                 implementation("io.ktor:ktor-server-call-logging:2.1.0")
+                api("io.ktor:ktor-server-content-negotiation:2.1.0")
+                api("io.ktor:ktor-serialization-kotlinx-json:2.1.0")
+
 
 
                 // to remove:
