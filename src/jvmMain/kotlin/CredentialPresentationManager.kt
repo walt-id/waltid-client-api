@@ -11,6 +11,7 @@ import id.walt.vclib.credentials.VerifiablePresentation
 import id.walt.vclib.model.VerifiableCredential
 import id.walt.vclib.model.toCredential
 import id.walt.vclib.templates.VcTemplateManager
+import kotlinx.serialization.Serializable
 import java.time.Duration
 import java.util.*
 import java.util.concurrent.*
@@ -29,6 +30,7 @@ data class PresentableCredential(
     val claimId: String?
 )
 
+@Serializable
 data class PresentationResponse(
     val id_token: String?,
     val vp_token: String?,
